@@ -19,11 +19,16 @@ export function AuthProvider({ children }) {
     const response = await fetch(API + "/users/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({user: credentials}),
     });
-    const result = await response.json();
+    let result = {};
+      try {
+        result = await response.json();
+      } catch (error) {
+        console.error(error)
+      }
     if (!response.ok) {
-      throw Error(result.message);
+      throw new Error(result?.message || "Registration failed.");
     }
     setToken(result.token);
   };
@@ -34,7 +39,12 @@ export function AuthProvider({ children }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
-    const result = await response.json();
+   let result = {};
+      try {
+        result = await response.json();
+      } catch (error) {
+        console.error(error)
+      }
     if (!response.ok) {
       throw Error(result.message);
     }

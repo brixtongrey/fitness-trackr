@@ -1,3 +1,4 @@
+
 /**
  * AuthContext manages the user's authentication state by storing a token,
  * It provides functions for the user to register, log in, and log out,

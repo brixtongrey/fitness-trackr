@@ -1,36 +1,43 @@
-import React from "react";
+import { useState } from "react";
 import { deleteActivity } from "../api/activities";
+import { useAuth } from "../auth/AuthContext";
 
-export default function ActivityList({ activities, setActivities }) {
-
-  const token = localStorage.getItem("token");
-
-  const handleDelete = async(activityId) => {
-    if (!token) {
-      alert("You must be logged in to delete an activity.");
-    return;
-    }
-    try {
-      await deleteActivity(token, activityId);
-      setActivities((prev) => prev.filter((activity) => activity.id !== activityId));
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
+export default function ActivityList({ activities, syncActivities }) {
   return (
     <ul>
       {activities.map((activity) => (
-        <li 
-        key={activity.id}>
-          {activity.name}
-          {token && (
-            <button onClick={() => handleDelete(activity.id)}>Delete</button>
-          )}
-          </li>
+        <ActivityListItem
+          key={activity.id}
+          activity={activity}
+          syncActivities={syncActivities}
+        />
       ))}
     </ul>
+  );
+}
+
+function ActivityListItem({ activity, syncActivities }) {
+  const { token } = useAuth();
+
+  const [error, setError] = useState(null);
+
+  const tryDelete = async () => {
+    setError(null);
+
+    try {
+      await deleteActivity(token, activity.id);
+      syncActivities();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  return (
+    <li>
+      <p>{activity.name}</p>
+      {token && <button onClick={tryDelete}>Delete</button>}
+      {error && <p role="alert">{error}</p>}
+    </li>
   );
 }
 

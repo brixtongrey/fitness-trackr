@@ -1,4 +1,3 @@
-
 /**
  * AuthContext manages the user's authentication state by storing a token,
  * It provides functions for the user to register, log in, and log out,
@@ -20,16 +19,11 @@ export function AuthProvider({ children }) {
     const response = await fetch(API + "/users/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({user: credentials}),
+      body: JSON.stringify(credentials),
     });
-    let result = {};
-      try {
-        result = await response.json();
-      } catch (error) {
-        console.error(error)
-      }
+    const result = await response.json();
     if (!response.ok) {
-      throw new Error(result?.message || "Registration failed.");
+      throw Error(result.message);
     }
     setToken(result.token);
   };
@@ -40,12 +34,7 @@ export function AuthProvider({ children }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
-   let result = {};
-      try {
-        result = await response.json();
-      } catch (error) {
-        console.error(error)
-      }
+    const result = await response.json();
     if (!response.ok) {
       throw Error(result.message);
     }

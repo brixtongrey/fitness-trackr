@@ -9,16 +9,11 @@ export default function Register() {
 
   const [error, setError] = useState(null);
 
-  const tryRegister = async (event) => {
-    event.preventDefault();
+  const tryRegister = async (formData) => {
     setError(null);
 
-    const formData = new FormData(event.target);
     const username = formData.get("username");
     const password = formData.get("password");
-
-  console.log("Trying to register:", { username, password });
-
     try {
       await register({ username, password });
       setPage("activities");
@@ -30,7 +25,7 @@ export default function Register() {
   return (
     <>
       <h1>Register for an account</h1>
-      <form onSubmit={tryRegister}>
+      <form action={tryRegister}>
         <label>
           Username
           <input type="text" name="username" required />
@@ -39,7 +34,7 @@ export default function Register() {
           Password
           <input type="password" name="password" required />
         </label>
-        <button type="submit">Register</button>
+        <button>Register</button>
         {error && <p role="alert">{error}</p>}
       </form>
       <a onClick={() => setPage("login")}>
